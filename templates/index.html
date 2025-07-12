@@ -826,30 +826,33 @@
             const video = document.getElementById('newsVideo');
             const soundButton = document.getElementById('soundButton');
 
-            video.addEventListener('click', function() {
-                if (video.paused) {
-                    video.play();
-                    if (video.muted) {
+            // Only add video event listeners if video and sound button exist
+            if (video && soundButton) {
+                video.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play();
+                        if (video.muted) {
+                            soundButton.style.display = 'flex';
+                        }
+                    } else {
+                        video.pause();
                         soundButton.style.display = 'flex';
                     }
-                } else {
+                });
+
+                soundButton.addEventListener('click', function() {
+                    video.currentTime = 0;
+                    video.muted = false;
+                    video.play();
+                    soundButton.style.display = 'none';
+                });
+
+                video.addEventListener('ended', function() {
                     video.pause();
+                    video.muted = true;
                     soundButton.style.display = 'flex';
-                }
-            });
-
-            soundButton.addEventListener('click', function() {
-                video.currentTime = 0;
-                video.muted = false;
-                video.play();
-                soundButton.style.display = 'none';
-            });
-
-            video.addEventListener('ended', function() {
-                video.pause();
-                video.muted = true;
-                soundButton.style.display = 'flex';
-            });
+                });
+            }
         });
 
 
@@ -932,7 +935,12 @@
         }
 
         // Adicionar evento de clique no botão "Regularizar agora"
-        document.querySelector('.regularize-button').addEventListener('click', generatePayment);
+        document.addEventListener('DOMContentLoaded', function() {
+            const regularizeButton = document.querySelector('.regularize-button');
+            if (regularizeButton) {
+                regularizeButton.addEventListener('click', generatePayment);
+            }
+        });
 
         // Fechar modal ao clicar fora
         window.onclick = function(event) {
